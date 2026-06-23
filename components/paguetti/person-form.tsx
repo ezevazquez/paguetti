@@ -27,8 +27,13 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
   const [errors, setErrors] = useState<FormErrors>({})
 
   const nameRef = useRef<HTMLInputElement>(null)
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     nameRef.current?.focus()
   }, [focusTrigger])
 
