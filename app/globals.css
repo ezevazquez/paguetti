@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Paguetti design tokens ─────────────────────────────────────────────────
+   Raw values live on :root / .dark so they can switch at runtime.
+   @theme maps them to Tailwind utilities via var() — @theme inline would bake
+   hex values at build time and dark mode would not apply.
+──────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --background:            #EFF6FF;
+  --foreground:            #0F172A;
+  --card:                  #FFFFFF;
+  --card-foreground:       #0F172A;
+  --popover:               #FFFFFF;
+  --popover-foreground:    #0F172A;
+  --primary:               #2563EB;
+  --primary-hover:         #1D4ED8;
+  --primary-foreground:    #FFFFFF;
+  --secondary:             #F8FAFC;
+  --secondary-foreground:    #475569;
+  --muted:                 #F8FAFC;
+  --muted-foreground:      #64748B;
+  --accent:                #84CC16;
+  --accent-foreground:     #0F172A;
+  --destructive:           #E11D48;
+  --destructive-foreground: #FFFFFF;
+  --border:                #DCEBFF;
+  --input:                 #DCEBFF;
+  --ring:                  #2563EB;
+  --surface-elevated:      #F8FAFC;
+  --lime:                  #84CC16;
+  --lime-foreground:       #0F172A;
+  --warning:               #F59E0B;
+  --warning-foreground:    #0F172A;
+  --radius:                0.75rem;
+  --shadow-surface:        0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(37 99 235 / 0.06);
+  --shadow-btn:            0 1px 2px rgb(29 78 216 / 0.2), 0 4px 12px rgb(37 99 235 / 0.18);
+}
+
+.dark {
+  --background:            #07111F;
+  --foreground:            #F8FAFC;
+  --card:                  #0D1B2E;
+  --card-foreground:       #F8FAFC;
+  --popover:               #13243A;
+  --popover-foreground:    #F8FAFC;
+  --primary:               #3B82F6;
+  --primary-hover:         #2563EB;
+  --primary-foreground:    #F8FAFC;
+  --secondary:             #13243A;
+  --secondary-foreground:    #94A3B8;
+  --muted:                 #13243A;
+  --muted-foreground:      #64748B;
+  --accent:                #A3E635;
+  --accent-foreground:     #07111F;
+  --destructive:           #FB7185;
+  --destructive-foreground: #07111F;
+  --border:                #223854;
+  --input:                 #223854;
+  --ring:                  #3B82F6;
+  --surface-elevated:      #13243A;
+  --lime:                  #A3E635;
+  --lime-foreground:       #07111F;
+  --warning:               #FBBF24;
+  --warning-foreground:    #07111F;
+  --shadow-surface:        0 1px 2px rgb(0 0 0 / 0.2);
+  --shadow-btn:            0 2px 8px rgb(59 130 246 / 0.25);
+}
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-background:            var(--background);
+  --color-foreground:            var(--foreground);
+  --color-card:                  var(--card);
+  --color-card-foreground:       var(--card-foreground);
+  --color-popover:               var(--popover);
+  --color-popover-foreground:    var(--popover-foreground);
+  --color-primary:               var(--primary);
+  --color-primary-hover:         var(--primary-hover);
+  --color-primary-foreground:    var(--primary-foreground);
+  --color-secondary:             var(--secondary);
+  --color-secondary-foreground:  var(--secondary-foreground);
+  --color-muted:                 var(--muted);
+  --color-muted-foreground:      var(--muted-foreground);
+  --color-accent:                var(--accent);
+  --color-accent-foreground:     var(--accent-foreground);
+  --color-destructive:           var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border:                var(--border);
+  --color-input:                 var(--input);
+  --color-ring:                  var(--ring);
+  --color-surface-elevated:      var(--surface-elevated);
+  --color-lime:                  var(--lime);
+  --color-lime-foreground:       var(--lime-foreground);
+  --color-warning:               var(--warning);
+  --color-warning-foreground:    var(--warning-foreground);
+
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
