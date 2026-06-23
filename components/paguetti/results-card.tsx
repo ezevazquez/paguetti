@@ -82,7 +82,7 @@ export function ResultsCard({ result, onShare }: ResultsCardProps) {
         <button
           type="button"
           onClick={onShare}
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-border bg-transparent text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground dark:border-border"
         >
           <Share2 className="size-4 shrink-0" aria-hidden="true" />
           Compartir resumen

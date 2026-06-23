@@ -173,7 +173,7 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
       <button
         type="button"
         onClick={handleSubmit}
-        className="mt-0.5 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-card text-[15px] font-semibold text-foreground transition-colors hover:bg-muted/80 active:translate-y-px dark:bg-card/60 dark:hover:bg-muted/40"
+        className="mt-0.5 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-card text-[15px] font-semibold text-foreground transition-colors hover:border-primary/60 hover:bg-primary/5 active:translate-y-px dark:border-primary/50 dark:bg-card/60 dark:hover:bg-primary/10"
       >
         <Plus className="size-4 shrink-0" aria-hidden="true" />
         Agregar

@@ -73,6 +73,13 @@ export function PaguettiApp() {
     if (people.length >= 2) setIsCalculated(true)
   }
 
+  const handleReset = () => {
+    if (!confirm('¿Borrar todo el grupo y empezar de nuevo?')) return
+    setPeople([])
+    setIsCalculated(false)
+    setFocusTrigger((n) => n + 1)
+  }
+
   const result: CalculationResult | null =
     isCalculated && people.length >= 2 ? calculateTransfers(people) : null
 
@@ -112,7 +119,7 @@ export function PaguettiApp() {
         </section>
 
         {/* People list */}
-        <section aria-label="Personas cargadas" className="flex flex-col gap-2">
+        <section aria-label="Personas cargadas" className="mt-3 flex flex-col gap-2">
           {people.length === 0 ? (
             <div
               role="status"
@@ -133,9 +140,18 @@ export function PaguettiApp() {
             </div>
           ) : (
             <>
-              <p className="text-[11px] text-muted-foreground font-medium px-0.5">
-                {people.length} {people.length === 1 ? 'persona' : 'personas'} en el grupo
-              </p>
+              <div className="flex items-center justify-between px-0.5">
+                <p className="text-[11px] text-muted-foreground font-medium">
+                  {people.length} {people.length === 1 ? 'persona' : 'personas'} en el grupo
+                </p>
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="text-[11px] font-medium text-muted-foreground transition-colors hover:text-destructive"
+                >
+                  Reiniciar
+                </button>
+              </div>
 
               <ul className="flex flex-col gap-1.5" role="list">
                 {people.map((person) => (
