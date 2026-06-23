@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { Calculator } from 'lucide-react'
+import { Calculator, ChevronDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { ThemeToggle } from './theme-toggle'
 import { PersonForm } from './person-form'
 import { PersonCard } from './person-card'
@@ -21,6 +22,33 @@ function generateId(): string {
   return Math.random().toString(36).slice(2, 10)
 }
 
+function CollapseToggle({
+  expanded,
+  onToggle,
+  collapsedLabel,
+  expandedLabel,
+}: {
+  expanded: boolean
+  onToggle: () => void
+  collapsedLabel: string
+  expandedLabel: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={expanded}
+      className="flex w-full items-center justify-between rounded-xl border border-border/80 bg-card px-3.5 py-2.5 text-[13px] font-medium text-muted-foreground shadow-[var(--shadow-surface)] transition-colors hover:text-foreground dark:border-border dark:shadow-none"
+    >
+      <span>{expanded ? expandedLabel : collapsedLabel}</span>
+      <ChevronDown
+        className={cn('size-4 shrink-0 transition-transform', expanded && 'rotate-180')}
+        aria-hidden="true"
+      />
+    </button>
+  )
+}
+
 export function PaguettiApp() {
   const [isDark, setIsDark] = useState(false)
   const [people, setPeople] = useState<Person[]>([])
@@ -28,6 +56,8 @@ export function PaguettiApp() {
   const [shareOpen, setShareOpen] = useState(false)
   const [focusTrigger, setFocusTrigger] = useState(0)
   const [mounted, setMounted] = useState(false)
+  const [formExpanded, setFormExpanded] = useState(true)
+  const [listExpanded, setListExpanded] = useState(true)
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'))
@@ -64,19 +94,29 @@ export function PaguettiApp() {
   const handleDelete = (id: string) => {
     setPeople((prev) => {
       const next = prev.filter((p) => p.id !== id)
-      if (next.length < 2) setIsCalculated(false)
+      if (next.length < 2) {
+        setIsCalculated(false)
+        setFormExpanded(true)
+        setListExpanded(true)
+      }
       return next
     })
   }
 
   const handleCalculate = () => {
-    if (people.length >= 2) setIsCalculated(true)
+    if (people.length >= 2) {
+      setIsCalculated(true)
+      setFormExpanded(false)
+      setListExpanded(false)
+    }
   }
 
   const handleReset = () => {
     if (!confirm('¿Borrar todo el grupo y empezar de nuevo?')) return
     setPeople([])
     setIsCalculated(false)
+    setFormExpanded(true)
+    setListExpanded(true)
     setFocusTrigger((n) => n + 1)
   }
 
@@ -85,16 +125,40 @@ export function PaguettiApp() {
 
   const shareText = result ? buildShareText(result) : ''
   const canCalculate = people.length >= 2
+  const showForm = !result || formExpanded
+  const showList = !result || listExpanded
+
+  const formCard = (
+    <div className="flex flex-col gap-2">
+      <PersonForm onAdd={handleAdd} focusTrigger={focusTrigger} />
+      {people.length >= 1 && (
+        <button
+          type="button"
+          onClick={handleCalculate}
+          disabled={!canCalculate}
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[calc(var(--radius)*1.4)] border-0 bg-gradient-to-b from-primary to-primary-hover text-base font-bold tracking-tight text-primary-foreground shadow-[var(--shadow-btn)] transition-[filter,transform] hover:brightness-[1.06] active:translate-y-px disabled:cursor-not-allowed disabled:bg-muted disabled:from-muted disabled:to-muted disabled:text-muted-foreground disabled:opacity-45 disabled:shadow-none"
+          aria-disabled={!canCalculate}
+        >
+          <Calculator className="size-[18px] shrink-0" aria-hidden="true" />
+          Calcular reparto
+        </button>
+      )}
+    </div>
+  )
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-[480px] px-3.5 pb-10 pt-2 flex flex-col gap-3">
-        {/* Header */}
-        <header className="relative pt-1 pb-1">
-          <div className="absolute top-0 right-0 z-10">
-            <ThemeToggle isDark={isDark} onToggle={toggleTheme} mounted={mounted} />
-          </div>
+    <main className="relative min-h-screen overflow-x-hidden bg-background">
+      <div className="fixed top-3.5 right-3.5 z-20">
+        <ThemeToggle isDark={isDark} onToggle={toggleTheme} mounted={mounted} />
+      </div>
 
+      <div
+        className={cn(
+          'mx-auto w-full max-w-[480px] min-w-0 overflow-x-hidden px-3.5 pb-10 flex flex-col gap-3 transition-[padding-top] duration-300 ease-out',
+          people.length === 0 ? 'pt-[22vh] sm:pt-28' : 'pt-8 sm:pt-10'
+        )}
+      >
+        <header className="pb-1">
           <div className="flex flex-col items-center gap-1 px-8">
             <Image
               src="/big-logo.png"
@@ -110,34 +174,77 @@ export function PaguettiApp() {
           </div>
         </header>
 
+        {result && (
+          <ResultsCard result={result} onShare={() => setShareOpen(true)} />
+        )}
+
         {/* Form */}
-        <section
-          aria-label="Agregar persona"
-          className="rounded-[calc(var(--radius)*1.4)] border border-border/80 bg-card px-3.5 py-3 shadow-[var(--shadow-surface)] dark:border-border dark:shadow-none"
-        >
-          <PersonForm onAdd={handleAdd} focusTrigger={focusTrigger} />
-        </section>
+        {result ? (
+          <section aria-label="Agregar persona" className="flex flex-col gap-2">
+            <CollapseToggle
+              expanded={formExpanded}
+              onToggle={() => setFormExpanded((v) => !v)}
+              collapsedLabel="Agregar persona"
+              expandedLabel="Ocultar carga"
+            />
+            {showForm && (
+              <div className="rounded-[calc(var(--radius)*1.4)] border border-border/80 bg-card px-3.5 py-3 shadow-[var(--shadow-surface)] dark:border-border dark:shadow-none">
+                {formCard}
+              </div>
+            )}
+          </section>
+        ) : (
+          <section
+            aria-label="Agregar persona"
+            className="rounded-[calc(var(--radius)*1.4)] border border-border/80 bg-card px-3.5 py-3 shadow-[var(--shadow-surface)] dark:border-border dark:shadow-none"
+          >
+            {formCard}
+          </section>
+        )}
 
         {/* People list */}
-        <section aria-label="Personas cargadas" className="mt-3 flex flex-col gap-2">
+        <section aria-label="Personas cargadas" className={cn('flex flex-col gap-2', !result && 'mt-3')}>
           {people.length === 0 ? (
             <div
               role="status"
-              className="flex items-center gap-3 rounded-xl border border-dashed border-border/80 bg-card/40 px-3 py-3"
+              className="rounded-xl border border-dashed border-border/80 bg-card/40 px-3 py-3 text-center"
             >
-              <Image
-                src="/small-logo.png"
-                alt=""
-                width={32}
-                height={32}
-                aria-hidden
-                className="size-8 shrink-0 object-contain opacity-50"
-              />
               <p className="text-[13px] text-muted-foreground leading-snug">
                 Todavía no cargaste a nadie.{' '}
                 <span className="text-secondary-foreground">Sumá al primero del grupo.</span>
               </p>
             </div>
+          ) : result ? (
+            <>
+              <div className="flex justify-end px-0.5">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="text-[11px] font-medium text-muted-foreground transition-colors hover:text-destructive"
+                >
+                  Reiniciar
+                </button>
+              </div>
+              <CollapseToggle
+                expanded={listExpanded}
+                onToggle={() => setListExpanded((v) => !v)}
+                collapsedLabel={`${people.length} ${people.length === 1 ? 'persona' : 'personas'} en el grupo`}
+                expandedLabel="Ocultar grupo"
+              />
+              {showList && (
+                <ul className="flex flex-col gap-1.5" role="list">
+                  {people.map((person) => (
+                    <li key={person.id}>
+                      <PersonCard
+                        person={person}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           ) : (
             <>
               <div className="flex items-center justify-between px-0.5">
@@ -173,27 +280,6 @@ export function PaguettiApp() {
             </>
           )}
         </section>
-
-        {/* Calculate */}
-        {people.length >= 1 && (
-          <section aria-label="Calcular reparto">
-            <button
-              type="button"
-              onClick={handleCalculate}
-              disabled={!canCalculate}
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[calc(var(--radius)*1.4)] border-0 bg-gradient-to-b from-primary to-primary-hover text-base font-bold tracking-tight text-primary-foreground shadow-[var(--shadow-btn)] transition-[filter,transform] hover:brightness-[1.06] active:translate-y-px disabled:cursor-not-allowed disabled:bg-muted disabled:from-muted disabled:to-muted disabled:text-muted-foreground disabled:opacity-45 disabled:shadow-none"
-              aria-disabled={!canCalculate}
-            >
-              <Calculator className="size-[18px] shrink-0" aria-hidden="true" />
-              Calcular reparto
-            </button>
-          </section>
-        )}
-
-        {/* Results */}
-        {result && (
-          <ResultsCard result={result} onShare={() => setShareOpen(true)} />
-        )}
       </div>
 
       <ShareModal

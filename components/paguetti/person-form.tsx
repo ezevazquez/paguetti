@@ -16,6 +16,9 @@ interface FormErrors {
   amount?: string
 }
 
+const INPUT_CLASS =
+  'h-11 w-full min-w-0 rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-base text-foreground outline-none placeholder:text-muted-foreground dark:bg-card/80'
+
 export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
   const [name, setName] = useState('')
   const [alias, setAlias] = useState('')
@@ -105,10 +108,7 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
             autoComplete="off"
             aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'pg-name-error' : undefined}
-            className={cn(
-              'h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80',
-              errors.name && 'border-destructive'
-            )}
+            className={cn(INPUT_CLASS, errors.name && 'border-destructive')}
           />
           {errors.name && (
             <p id="pg-name-error" role="alert" className="text-[11px] text-destructive">
@@ -129,7 +129,7 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
           onKeyDown={handleAliasKeyDown}
           placeholder="Ej: juli.mp"
           autoComplete="off"
-          className="h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80"
+          className={INPUT_CLASS}
         />
 
         {/* Monto */}
@@ -156,10 +156,7 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
               autoComplete="off"
               aria-invalid={!!errors.amount}
               aria-describedby={errors.amount ? 'pg-amount-error' : undefined}
-              className={cn(
-                'h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background pl-6 pr-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80',
-                errors.amount && 'border-destructive'
-              )}
+              className={cn(INPUT_CLASS, 'pl-6', errors.amount && 'border-destructive')}
             />
           </div>
           {errors.amount && (

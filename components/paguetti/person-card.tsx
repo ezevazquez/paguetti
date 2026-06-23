@@ -25,6 +25,9 @@ interface FormErrors {
   amount?: string
 }
 
+const INPUT_CLASS =
+  'h-11 w-full min-w-0 rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-base text-foreground outline-none placeholder:text-muted-foreground dark:bg-card/80'
+
 export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
@@ -118,7 +121,7 @@ export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
       </article>
 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="max-w-sm w-[calc(100vw-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
+        <DialogContent className="max-w-sm w-[calc(100%-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
           <DialogHeader className="px-4 pt-4 pb-0">
             <DialogTitle className="text-[15px] font-semibold text-foreground">
               Editar a {person.name}
@@ -140,10 +143,7 @@ export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
                 placeholder="Ej: Juli"
                 autoComplete="off"
                 aria-invalid={!!editErrors.name}
-                className={cn(
-                  'h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80',
-                  editErrors.name && 'border-destructive'
-                )}
+                className={cn(INPUT_CLASS, editErrors.name && 'border-destructive')}
               />
               {editErrors.name && (
                 <p role="alert" className="text-[11px] text-destructive">
@@ -161,7 +161,7 @@ export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
               onChange={(e) => setEditAlias(e.target.value)}
               placeholder="Ej: juli.mp"
               autoComplete="off"
-              className="h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80"
+              className={INPUT_CLASS}
             />
 
             <label htmlFor="edit-amount" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
@@ -186,10 +186,7 @@ export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
                   pattern="[0-9]*"
                   autoComplete="off"
                   aria-invalid={!!editErrors.amount}
-                  className={cn(
-                    'h-11 w-full rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background pl-6 pr-3 text-[15px] text-foreground transition-[border-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lime/35 dark:bg-card/80',
-                    editErrors.amount && 'border-destructive'
-                  )}
+                  className={cn(INPUT_CLASS, 'pl-6', editErrors.amount && 'border-destructive')}
                 />
               </div>
               {editErrors.amount && (

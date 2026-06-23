@@ -42,7 +42,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-before-interactive-script-component */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="font-sans antialiased min-h-screen">
+      <body className="font-sans antialiased min-h-screen overflow-x-hidden">
         {children}
         <Toaster position="bottom-center" />
       </body>

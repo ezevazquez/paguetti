@@ -51,7 +51,7 @@ export function ShareModal({ open, onClose, text }: ShareModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm w-[calc(100vw-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
+      <DialogContent className="max-w-sm w-[calc(100%-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
         <DialogHeader className="flex flex-row items-center justify-between px-4 pt-4 pb-0">
           <DialogTitle className="text-[15px] font-semibold text-foreground">
             Compartir resumen

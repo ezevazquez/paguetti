@@ -23,17 +23,17 @@ export function ThemeToggle({ isDark, onToggle, mounted = true, className }: The
           : 'Cambiar tema'
       }
       className={cn(
-        'flex size-8 items-center justify-center rounded-lg',
-        'text-muted-foreground/70 transition-colors',
+        'flex size-10 items-center justify-center rounded-xl',
+        'text-muted-foreground transition-colors',
         'hover:bg-muted/60 hover:text-foreground',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime/40',
+        'focus-visible:outline-none',
         className
       )}
     >
       {mounted && isDark ? (
-        <Sun className="size-3.5" aria-hidden="true" />
+        <Sun className="size-[18px]" aria-hidden="true" />
       ) : (
-        <Moon className="size-3.5" aria-hidden="true" />
+        <Moon className="size-[18px]" aria-hidden="true" />
       )}
     </button>
   )
