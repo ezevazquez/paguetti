@@ -98,7 +98,7 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
             {person.alias ? (
               <>
                 Alias:{' '}
-                <span className="text-lime font-medium">{person.alias}</span>
+                <span className="font-bold">{person.alias}</span>
               </>
             ) : (
               'Sin alias'

@@ -51,7 +51,7 @@ export function ShareModal({ open, onClose, text }: ShareModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm w-[calc(100%-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
+      <DialogContent showCloseButton={false} className="max-w-sm w-[calc(100%-2rem)] rounded-2xl bg-popover border-border p-0 overflow-hidden">
         <DialogHeader className="flex flex-row items-center justify-between px-4 pt-4 pb-0">
           <DialogTitle className="text-[15px] font-semibold text-foreground">
             Compartir resumen
@@ -61,7 +61,7 @@ export function ShareModal({ open, onClose, text }: ShareModalProps) {
             size="sm"
             onClick={onClose}
             aria-label="Cerrar"
-            className="size-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted -mr-1"
+            className="size-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             <X className="size-4" aria-hidden="true" />
           </Button>
@@ -69,9 +69,9 @@ export function ShareModal({ open, onClose, text }: ShareModalProps) {
 
         <div className="mx-4 my-3 rounded-xl border border-border/70 bg-card overflow-hidden">
           <div className="px-2.5 py-1.5 border-b border-border/60 bg-muted/30">
-            <span className="text-[11px] text-muted-foreground font-medium">Vista previa</span>
+            <span className="text-[11px] text-secondary-foreground font-medium">Vista previa</span>
           </div>
-          <pre className="text-[11px] text-foreground/90 leading-relaxed px-2.5 py-2.5 overflow-x-auto whitespace-pre-wrap font-sans max-h-44 overflow-y-auto">
+          <pre className="text-[11px] text-foreground leading-relaxed px-2.5 py-2.5 overflow-x-auto whitespace-pre-wrap font-sans max-h-44 overflow-y-auto">
             {text}
           </pre>
         </div>

@@ -1,8 +1,9 @@
 'use client'
 
 import { ArrowRight, Share2, Sparkles } from 'lucide-react'
-import { formatARS } from '@/lib/paguetti'
-import type { CalculationResult } from '@/lib/paguetti'
+import { btnSecondaryClass } from './button-styles'
+import { formatARS, type CalculationResult } from '@/lib/paguetti'
+import { cn } from '@/lib/utils'
 
 interface ResultsCardProps {
   result: CalculationResult
@@ -65,7 +66,7 @@ export function ResultsCard({ result, onShare }: ResultsCardProps) {
                   {transfer.toAlias ? (
                     <>
                       Alias:{' '}
-                      <span className="text-lime font-medium">{transfer.toAlias}</span>
+                      <span className="font-bold">{transfer.toAlias}</span>
                     </>
                   ) : (
                     <>{transfer.to} no cargó alias</>
@@ -82,7 +83,7 @@ export function ResultsCard({ result, onShare }: ResultsCardProps) {
         <button
           type="button"
           onClick={onShare}
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-border bg-transparent text-[14px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground dark:border-border"
+          className={cn(btnSecondaryClass, 'h-10 w-full text-[14px] dark:font-semibold dark:text-foreground')}
         >
           <Share2 className="size-4 shrink-0" aria-hidden="true" />
           Compartir resumen

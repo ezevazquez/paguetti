@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Calculator, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { btnTertiaryClass } from './button-styles'
 import { ThemeToggle } from './theme-toggle'
 import { PersonForm } from './person-form'
 import { PersonCard } from './person-card'
@@ -179,16 +180,7 @@ export function PaguettiApp() {
                 </p>
               ) : (
                 <div className="mt-3 border-t border-border/60 pt-3 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[11px] font-medium text-muted-foreground">{peopleLabel}</p>
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="text-[11px] font-medium text-muted-foreground transition-colors hover:text-destructive"
-                    >
-                      Reiniciar
-                    </button>
-                  </div>
+                  <p className="text-[11px] font-medium text-muted-foreground">{peopleLabel}</p>
 
                   <ul className="flex flex-col" role="list">
                     {people.map((person) => (
@@ -218,6 +210,14 @@ export function PaguettiApp() {
                   >
                     <Calculator className="size-[18px] shrink-0" aria-hidden="true" />
                     Calcular reparto
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className={cn(btnTertiaryClass, 'h-9 w-full')}
+                  >
+                    Reiniciar
                   </button>
                 </div>
               )}
