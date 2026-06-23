@@ -18,6 +18,7 @@ interface PersonCardProps {
   person: Person
   onEdit: (updated: Person) => void
   onDelete: (id: string) => void
+  embedded?: boolean
 }
 
 interface FormErrors {
@@ -28,7 +29,7 @@ interface FormErrors {
 const INPUT_CLASS =
   'h-11 w-full min-w-0 rounded-[calc(var(--radius)*0.8)] border border-border/90 bg-background px-3 text-base text-foreground outline-none placeholder:text-muted-foreground dark:bg-card/80'
 
-export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
+export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardProps) {
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editAlias, setEditAlias] = useState('')
@@ -76,7 +77,14 @@ export function PersonCard({ person, onEdit, onDelete }: PersonCardProps) {
 
   return (
     <>
-      <article className="flex items-center gap-2 rounded-lg border border-border/70 bg-card px-2.5 py-2 transition-colors hover:bg-surface-elevated dark:border-border dark:bg-card/90">
+      <article
+        className={cn(
+          'flex items-center gap-2',
+          embedded
+            ? 'border-b border-border/50 py-2 last:border-b-0'
+            : 'rounded-lg border border-border/70 bg-card px-2.5 py-2 transition-colors hover:bg-surface-elevated dark:border-border dark:bg-card/90'
+        )}
+      >
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
             <span className="font-semibold text-[15px] text-foreground leading-tight truncate">
