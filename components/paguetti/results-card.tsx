@@ -1,16 +1,17 @@
 'use client'
 
 import { ArrowRight, Share2, Sparkles } from 'lucide-react'
-import { btnSecondaryClass } from './button-styles'
+import { btnSecondaryClass, btnTertiaryClass } from './button-styles'
 import { formatARS, type CalculationResult } from '@/lib/paguetti'
 import { cn } from '@/lib/utils'
 
 interface ResultsCardProps {
   result: CalculationResult
   onShare: () => void
+  onReset: () => void
 }
 
-export function ResultsCard({ result, onShare }: ResultsCardProps) {
+export function ResultsCard({ result, onShare, onReset }: ResultsCardProps) {
   return (
     <section
       aria-label="Resultado del reparto"
@@ -78,8 +79,8 @@ export function ResultsCard({ result, onShare }: ResultsCardProps) {
         )}
       </div>
 
-      {/* Share */}
-      <div className="px-3.5 pb-3.5">
+      {/* Share & reset */}
+      <div className="flex flex-col gap-2 px-3.5 pb-3.5">
         <button
           type="button"
           onClick={onShare}
@@ -87,6 +88,14 @@ export function ResultsCard({ result, onShare }: ResultsCardProps) {
         >
           <Share2 className="size-4 shrink-0" aria-hidden="true" />
           Compartir resumen
+        </button>
+
+        <button
+          type="button"
+          onClick={onReset}
+          className={cn(btnTertiaryClass, 'h-9 w-full')}
+        >
+          Reiniciar
         </button>
       </div>
     </section>

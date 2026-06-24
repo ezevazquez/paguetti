@@ -226,7 +226,11 @@ export function PaguettiApp() {
         </section>
 
         {result && (
-          <ResultsCard result={result} onShare={() => setShareOpen(true)} />
+          <ResultsCard
+            result={result}
+            onShare={() => setShareOpen(true)}
+            onReset={handleReset}
+          />
         )}
       </div>
 
