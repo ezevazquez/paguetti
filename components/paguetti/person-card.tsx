@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { Switch } from '@/components/ui/switch'
 import { formatARS, formatAmountInput, parseAmountInput } from '@/lib/paguetti'
 import type { Person } from '@/lib/paguetti'
 
@@ -34,13 +35,17 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
   const [editName, setEditName] = useState('')
   const [editAlias, setEditAlias] = useState('')
   const [editAmountDisplay, setEditAmountDisplay] = useState('')
+  const [editDidNotPay, setEditDidNotPay] = useState(false)
   const [editErrors, setEditErrors] = useState<FormErrors>({})
 
   const openEdit = () => {
     setEditName(person.name)
     setEditAlias(person.alias)
+    setEditDidNotPay(!!person.didNotPay)
     setEditAmountDisplay(
-      person.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      person.didNotPay
+        ? ''
+        : person.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     )
     setEditErrors({})
     setEditOpen(true)
@@ -54,11 +59,13 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
   const validateEdit = (): boolean => {
     const newErrors: FormErrors = {}
     if (!editName.trim()) newErrors.name = 'Sumá un nombre.'
-    const parsed = parseAmountInput(editAmountDisplay)
-    if (!editAmountDisplay.trim()) {
-      newErrors.amount = 'Sumá cuánto pagó.'
-    } else if (parsed === 0) {
-      newErrors.amount = 'El monto tiene que ser mayor a $0.'
+    if (!editDidNotPay) {
+      const parsed = parseAmountInput(editAmountDisplay)
+      if (!editAmountDisplay.trim()) {
+        newErrors.amount = 'Sumá cuánto pagó.'
+      } else if (parsed === 0) {
+        newErrors.amount = 'El monto tiene que ser mayor a $0.'
+      }
     }
     setEditErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -69,10 +76,20 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
     onEdit({
       ...person,
       name: editName.trim(),
-      alias: editAlias.trim(),
-      amount: parseAmountInput(editAmountDisplay),
+      alias: editDidNotPay ? '' : editAlias.trim(),
+      amount: editDidNotPay ? 0 : parseAmountInput(editAmountDisplay),
+      didNotPay: editDidNotPay || undefined,
     })
     setEditOpen(false)
+  }
+
+  const handleEditPaidChange = (paid: boolean) => {
+    setEditDidNotPay(!paid)
+    if (!paid) {
+      setEditAlias('')
+      setEditAmountDisplay('')
+      setEditErrors((prev) => ({ ...prev, amount: undefined }))
+    }
   }
 
   return (
@@ -90,20 +107,27 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
             <span className="font-semibold text-[15px] text-foreground leading-tight truncate">
               {person.name}
             </span>
-            <span className="text-sm font-bold text-primary shrink-0 tabular-nums">
-              {formatARS(person.amount)}
+            <span
+              className={cn(
+                'text-sm font-bold shrink-0 tabular-nums',
+                person.didNotPay ? 'text-muted-foreground' : 'text-primary'
+              )}
+            >
+              {person.didNotPay ? 'No puso' : formatARS(person.amount)}
             </span>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
-            {person.alias ? (
-              <>
-                Alias:{' '}
-                <span className="font-bold">{person.alias}</span>
-              </>
-            ) : (
-              'Sin alias'
-            )}
-          </p>
+          {!person.didNotPay && (
+            <p className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
+              {person.alias ? (
+                <>
+                  Alias:{' '}
+                  <span className="font-bold">{person.alias}</span>
+                </>
+              ) : (
+                'Sin alias'
+              )}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-0 shrink-0">
@@ -136,72 +160,97 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(68px,76px)_1fr] gap-x-2.5 gap-y-1.5 items-start px-4 py-3">
+          <div className="px-4 py-3 flex flex-col gap-3">
+            <div className="grid grid-cols-[minmax(68px,76px)_1fr] gap-x-2.5 gap-y-1.5 items-start">
             <label htmlFor="edit-name" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
               Nombre
             </label>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <input
-                id="edit-name"
-                value={editName}
-                onChange={(e) => {
-                  setEditName(e.target.value)
-                  if (editErrors.name) setEditErrors((p) => ({ ...p, name: undefined }))
-                }}
-                placeholder="Ej: Juli"
-                autoComplete="off"
-                aria-invalid={!!editErrors.name}
-                className={cn(INPUT_CLASS, editErrors.name && 'border-destructive')}
-              />
+              <div className="flex items-center gap-2.5 min-w-0">
+                <input
+                  id="edit-name"
+                  value={editName}
+                  onChange={(e) => {
+                    setEditName(e.target.value)
+                    if (editErrors.name) setEditErrors((p) => ({ ...p, name: undefined }))
+                  }}
+                  placeholder="Ej: Juli"
+                  autoComplete="off"
+                  aria-invalid={!!editErrors.name}
+                  aria-describedby={
+                    editErrors.name
+                      ? 'edit-name-error'
+                      : editDidNotPay
+                        ? 'edit-did-not-pay-hint'
+                        : undefined
+                  }
+                  className={cn(INPUT_CLASS, 'flex-1 min-w-0', editErrors.name && 'border-destructive')}
+                />
+                <Switch
+                  checked={!editDidNotPay}
+                  onCheckedChange={handleEditPaidChange}
+                  aria-label={editDidNotPay ? 'No puso' : 'Pagó'}
+                />
+              </div>
+              {editDidNotPay && (
+                <p id="edit-did-not-pay-hint" className="text-[11px] text-muted-foreground leading-snug">
+                  No puso $$$
+                </p>
+              )}
               {editErrors.name && (
-                <p role="alert" className="text-[11px] text-destructive">
+                <p id="edit-name-error" role="alert" className="text-[11px] text-destructive">
                   {editErrors.name}
                 </p>
               )}
             </div>
 
-            <label htmlFor="edit-alias" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
-              Alias
-            </label>
-            <input
-              id="edit-alias"
-              value={editAlias}
-              onChange={(e) => setEditAlias(e.target.value)}
-              placeholder="Ej: juli.mp"
-              autoComplete="off"
-              className={INPUT_CLASS}
-            />
-
-            <label htmlFor="edit-amount" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
-              Monto
-            </label>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <div className="relative">
-                <span
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm select-none pointer-events-none"
-                  aria-hidden="true"
-                >
-                  $
-                </span>
+            {!editDidNotPay && (
+              <>
+                <label htmlFor="edit-alias" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
+                  Alias
+                </label>
                 <input
-                  id="edit-amount"
-                  value={editAmountDisplay}
-                  onChange={handleEditAmountChange}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-                  placeholder="Ej: 18.500"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
+                  id="edit-alias"
+                  value={editAlias}
+                  onChange={(e) => setEditAlias(e.target.value)}
+                  placeholder="Ej: juli.mp"
                   autoComplete="off"
-                  aria-invalid={!!editErrors.amount}
-                  className={cn(INPUT_CLASS, 'pl-6', editErrors.amount && 'border-destructive')}
+                  className={INPUT_CLASS}
                 />
-              </div>
-              {editErrors.amount && (
-                <p role="alert" className="text-[11px] text-destructive">
-                  {editErrors.amount}
-                </p>
-              )}
+
+                <label htmlFor="edit-amount" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
+                  Monto
+                </label>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <div className="relative">
+                    <span
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm select-none pointer-events-none"
+                      aria-hidden="true"
+                    >
+                      $
+                    </span>
+                    <input
+                      id="edit-amount"
+                      value={editAmountDisplay}
+                      onChange={handleEditAmountChange}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                      placeholder="Ej: 18.500"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete="off"
+                      aria-invalid={!!editErrors.amount}
+                      className={cn(INPUT_CLASS, 'pl-6', editErrors.amount && 'border-destructive')}
+                    />
+                  </div>
+                  {editErrors.amount && (
+                    <p role="alert" className="text-[11px] text-destructive">
+                      {editErrors.amount}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
             </div>
           </div>
 

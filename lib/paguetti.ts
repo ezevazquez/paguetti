@@ -5,6 +5,8 @@ export interface Person {
   name: string
   alias: string
   amount: number // stored as integer pesos
+  /** Participa en la división pero no aportó plata */
+  didNotPay?: boolean
 }
 
 export interface Transfer {
