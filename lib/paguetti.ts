@@ -143,23 +143,32 @@ export function calculateTransfers(people: Person[]): CalculationResult {
 export function buildShareText(result: CalculationResult): string {
   const lines: string[] = []
 
-  lines.push('🧾 Resumen de Paguetti')
-  lines.push('')
-  lines.push(`Total gastado: ${formatARS(result.total)}`)
-  lines.push(`Personas: ${result.count}`)
+  lines.push('Resumen:')
+  lines.push(`Total: ${formatARS(result.total)}`)
   lines.push(`Cada uno pone: ${formatARS(result.share)}`)
   lines.push('')
 
   if (result.transfers.length === 0) {
     lines.push('Todos están al día. Nadie tiene que transferir nada.')
   } else {
-    lines.push('Transferencias:')
     for (const t of result.transfers) {
-      lines.push(`• ${t.from} le transfiere ${formatARS(t.amount)} a ${t.to}`)
-      if (t.toAlias) {
-        lines.push(`  Alias: ${t.toAlias}`)
+      lines.push(`- ${t.from} le transfiere ${formatARS(t.amount)} a ${t.to}`)
+    }
+
+    const recipientAliases = new Map<string, string>()
+    for (const t of result.transfers) {
+      if (!recipientAliases.has(t.to)) {
+        recipientAliases.set(t.to, t.toAlias)
+      }
+    }
+
+    lines.push('')
+    lines.push('Alias:')
+    for (const [name, alias] of recipientAliases) {
+      if (alias) {
+        lines.push(`- ${name}: *${alias}*`)
       } else {
-        lines.push(`  ${t.to} no cargó alias`)
+        lines.push(`- ${name}: sin alias`)
       }
     }
   }

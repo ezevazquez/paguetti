@@ -11,6 +11,15 @@ import { PersonCard } from './person-card'
 import { ResultsCard } from './results-card'
 import { ShareModal } from './share-modal'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import {
   type Person,
   type CalculationResult,
   calculateTransfers,
@@ -34,6 +43,7 @@ export function PaguettiApp() {
   const [focusTrigger, setFocusTrigger] = useState(0)
   const [mounted, setMounted] = useState(false)
   const [workboxExpanded, setWorkboxExpanded] = useState(true)
+  const [resetOpen, setResetOpen] = useState(false)
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'))
@@ -86,11 +96,15 @@ export function PaguettiApp() {
   }
 
   const handleReset = () => {
-    if (!confirm('¿Borrar todo el grupo y empezar de nuevo?')) return
+    setResetOpen(true)
+  }
+
+  const confirmReset = () => {
     setPeople([])
     setIsCalculated(false)
     setWorkboxExpanded(true)
     setFocusTrigger((n) => n + 1)
+    setResetOpen(false)
   }
 
   const result: CalculationResult | null =
@@ -239,6 +253,35 @@ export function PaguettiApp() {
         onClose={() => setShareOpen(false)}
         text={shareText}
       />
+
+      <Dialog open={resetOpen} onOpenChange={setResetOpen}>
+        <DialogContent className="max-w-sm rounded-2xl p-0 overflow-hidden" showCloseButton={false}>
+          <DialogHeader className="px-4 pt-4 pb-0">
+            <DialogTitle className="text-[15px] font-semibold text-foreground">
+              ¿Reiniciar el grupo?
+            </DialogTitle>
+            <DialogDescription className="text-[13px] leading-snug">
+              Se borran todas las personas y los resultados. No se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row gap-2 border-t-0 bg-transparent px-4 pb-4 pt-3">
+            <Button
+              variant="outline"
+              onClick={() => setResetOpen(false)}
+              className="flex-1 h-10 border-border text-foreground hover:bg-muted text-sm"
+            >
+              Cancelar
+            </Button>
+            <button
+              type="button"
+              onClick={confirmReset}
+              className="inline-flex h-10 flex-1 items-center justify-center rounded-lg border-0 bg-gradient-to-b from-primary to-primary-hover text-sm font-semibold text-primary-foreground shadow-[var(--shadow-btn)]"
+            >
+              Reiniciar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

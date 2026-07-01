@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { btnSecondaryClass } from './button-styles'
-import { Switch } from '@/components/ui/switch'
+import { PaidSwitch } from './paid-switch'
 import { formatAmountInput, parseAmountInput } from '@/lib/paguetti'
 import type { Person } from '@/lib/paguetti'
 
@@ -133,22 +133,11 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
               placeholder="Ej: Juli"
               autoComplete="off"
               aria-invalid={!!errors.name}
-              aria-describedby={
-                errors.name ? 'pg-name-error' : didNotPay ? 'pg-did-not-pay-hint' : undefined
-              }
+              aria-describedby={errors.name ? 'pg-name-error' : undefined}
               className={cn(INPUT_CLASS, 'flex-1 min-w-0', errors.name && 'border-destructive')}
             />
-            <Switch
-              checked={!didNotPay}
-              onCheckedChange={handlePaidChange}
-              aria-label={didNotPay ? 'No puso' : 'Pagó'}
-            />
+            <PaidSwitch paid={!didNotPay} onPaidChange={handlePaidChange} />
           </div>
-          {didNotPay && (
-            <p id="pg-did-not-pay-hint" className="text-[11px] text-muted-foreground leading-snug">
-              No puso $$$
-            </p>
-          )}
           {errors.name && (
             <p id="pg-name-error" role="alert" className="text-[11px] text-destructive">
               {errors.name}

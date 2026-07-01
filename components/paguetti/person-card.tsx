@@ -11,7 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { Switch } from '@/components/ui/switch'
+import { PaidSwitch } from './paid-switch'
 import { formatARS, formatAmountInput, parseAmountInput } from '@/lib/paguetti'
 import type { Person } from '@/lib/paguetti'
 
@@ -177,26 +177,11 @@ export function PersonCard({ person, onEdit, onDelete, embedded }: PersonCardPro
                   placeholder="Ej: Juli"
                   autoComplete="off"
                   aria-invalid={!!editErrors.name}
-                  aria-describedby={
-                    editErrors.name
-                      ? 'edit-name-error'
-                      : editDidNotPay
-                        ? 'edit-did-not-pay-hint'
-                        : undefined
-                  }
+                  aria-describedby={editErrors.name ? 'edit-name-error' : undefined}
                   className={cn(INPUT_CLASS, 'flex-1 min-w-0', editErrors.name && 'border-destructive')}
                 />
-                <Switch
-                  checked={!editDidNotPay}
-                  onCheckedChange={handleEditPaidChange}
-                  aria-label={editDidNotPay ? 'No puso' : 'Pagó'}
-                />
+                <PaidSwitch paid={!editDidNotPay} onPaidChange={handleEditPaidChange} />
               </div>
-              {editDidNotPay && (
-                <p id="edit-did-not-pay-hint" className="text-[11px] text-muted-foreground leading-snug">
-                  No puso $$$
-                </p>
-              )}
               {editErrors.name && (
                 <p id="edit-name-error" role="alert" className="text-[11px] text-destructive">
                   {editErrors.name}
