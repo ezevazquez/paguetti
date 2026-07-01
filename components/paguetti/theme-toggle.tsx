@@ -1,16 +1,34 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ThemeToggleProps {
-  isDark: boolean
-  onToggle: () => void
-  mounted?: boolean
   className?: string
 }
 
-export function ThemeToggle({ isDark, onToggle, mounted = true, className }: ThemeToggleProps) {
+export function ThemeToggle({ className }: ThemeToggleProps) {
+  const [isDark, setIsDark] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'))
+    setMounted(true)
+  }, [])
+
+  const onToggle = () => {
+    const next = !isDark
+    setIsDark(next)
+    if (next) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('paguetti-theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('paguetti-theme', 'light')
+    }
+  }
+
   return (
     <button
       type="button"

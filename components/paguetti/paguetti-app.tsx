@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Calculator, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { btnTertiaryClass } from './button-styles'
-import { ThemeToggle } from './theme-toggle'
 import { PersonForm } from './person-form'
 import { PersonCard } from './person-card'
 import { ResultsCard } from './results-card'
@@ -36,7 +35,6 @@ const WORKBOX_CLASS =
   'rounded-[calc(var(--radius)*1.4)] border border-border/80 bg-card shadow-[var(--shadow-surface)] dark:border-border dark:shadow-none'
 
 export function PaguettiApp() {
-  const [isDark, setIsDark] = useState(false)
   const [people, setPeople] = useState<Person[]>([])
   const [isCalculated, setIsCalculated] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
@@ -46,7 +44,6 @@ export function PaguettiApp() {
   const [resetOpen, setResetOpen] = useState(false)
 
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains('dark'))
     setMounted(true)
     const saved = loadPeople()
     if (saved.length > 0) setPeople(saved)
@@ -55,18 +52,6 @@ export function PaguettiApp() {
   useEffect(() => {
     if (mounted) savePeople(people)
   }, [people, mounted])
-
-  const toggleTheme = useCallback(() => {
-    const next = !isDark
-    setIsDark(next)
-    if (next) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('paguetti-theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('paguetti-theme', 'light')
-    }
-  }, [isDark])
 
   const handleAdd = (person: Omit<Person, 'id'>) => {
     setPeople((prev) => [...prev, { ...person, id: generateId() }])
@@ -118,10 +103,6 @@ export function PaguettiApp() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background">
-      <div className="fixed top-3.5 right-3.5 z-20">
-        <ThemeToggle isDark={isDark} onToggle={toggleTheme} mounted={mounted} />
-      </div>
-
       <div
         className={cn(
           'mx-auto w-full max-w-[480px] min-w-0 overflow-x-hidden px-3.5 pb-10 flex flex-col gap-3 transition-[padding-top] duration-300 ease-out',

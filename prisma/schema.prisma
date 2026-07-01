@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EventStatus {
+  collecting
+  calculated
+  closed
+}
+
+enum AddedBy {
+  self
+  host
+}
+
+model Profile {
+  id        String   @id @db.Uuid
+  email     String?
+  name      String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  hostedEvents Event[]       @relation("EventHost")
+  participants Participant[]
+
+  @@map("profiles")
+}
+
+model Event {
+  id        String      @id @default(uuid()) @db.Uuid
+  slug      String      @unique
+  hostId    String      @map("host_id") @db.Uuid
+  title     String?
+  status    EventStatus @default(collecting)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  host         Profile       @relation("EventHost", fields: [hostId], references: [id], onDelete: Cascade)
+  participants Participant[]
+
+  @@index([hostId])
+  @@map("events")
+}
+
+model Participant {
+  id             String   @id @default(uuid()) @db.Uuid
+  eventId        String   @map("event_id") @db.Uuid
+  profileId      String?  @map("profile_id") @db.Uuid
+  guestTokenHash String?  @map("guest_token_hash")
+  name           String
+  alias          String   @default("")
+  amount         Int      @default(0)
+  didNotPay      Boolean  @default(false) @map("did_not_pay")
+  addedBy        AddedBy  @default(self) @map("added_by")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  profile Profile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@map("participants")
+}
