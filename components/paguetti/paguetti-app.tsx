@@ -122,6 +122,9 @@ export function PaguettiApp() {
             <p className="text-[13px] text-muted-foreground text-center leading-snug">
               Separá gastos sin drama.
             </p>
+            <p className="text-[13px] text-muted-foreground text-center leading-snug">
+              Sumá quién pagó y Paguetti hace las cuentas.
+            </p>
           </div>
         </header>
 

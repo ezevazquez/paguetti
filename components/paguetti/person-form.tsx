@@ -110,10 +110,6 @@ export function PersonForm({ onAdd, focusTrigger }: PersonFormProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[13px] text-muted-foreground text-center leading-snug">
-        Sumá quién pagó y Paguetti hace las cuentas.
-      </p>
-
       <div className="grid grid-cols-[minmax(68px,76px)_1fr] gap-x-2.5 gap-y-1.5 items-start">
         {/* Nombre */}
         <label htmlFor="pg-name" className="pt-2.5 text-[13px] font-medium text-secondary-foreground">
